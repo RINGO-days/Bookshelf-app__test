@@ -18,34 +18,40 @@ use App\Http\Controllers\RankingController;
 |
 */
 
-Route::prefix('/books')->group(function(){
-    Route::get('/',[BookController::class,'index'])->name('books.index');
-    Route::get('/create',[BookController::class,'create'])->name('books.create');
-    Route::post('/store',[BookController::class,'store'])->name('books.store');
-    Route::get('/{book}',[BookController::class,'show'])->name('books.show');
-    Route::get('/{book}/edit',[BookController::class,'edit'])->name('books.edit');
-    Route::post('/{book}/update',[BookController::class,'update'])->name('books.update');
+
+Route::middleware('auth')->group(function(){
+    Route::prefix('/books')->group(function(){
+        Route::post('/{book}/favorite',[BookController::class,'favorite'])->name('favorites.toggle');
+        Route::post('/{book}/review',[BookController::class,'review'])->name('reviews.store');
+        Route::get('/create',[BookController::class,'create'])->name('books.create');
+        Route::post('/store',[BookController::class,'store'])->name('books.store');
+        Route::get('/{book}/edit',[BookController::class,'edit'])->name('books.edit');
+        Route::put('/{book}',[BookController::class,'update'])->name('books.update');
+        Route::delete('/{book}',[BookController::class,'destroy'])->name('books.destroy');
+    });
+
+    Route::prefix('/genre')->group(function(){
+        Route::get('/',[GenreController::class,'list'])->name('genres.index');
+        Route::get('/show/{genre}',[GenreController::class,'show'])->name('genres.show');
+        Route::get('/create',[GenreController::class,'create'])->name('genres.create');
+        Route::post('/store',[GenreController::class,'store'])->name('genres.store');
+        Route::get('/{genre}/edit',[GenreController::class,'edit'])->name('genres.edit');
+        Route::post('/{genre}/update',[GenreController::class,'update'])->name('genres.update');
+        Route::post('/destroy',[GenreController::class,'destroy'])->name('genres.destroy');
+    });
+
+    Route::prefix('/reviews')->group(function(){
+        Route::get('{review}/edit',[ReviewController::class,'edit'])->name('reviews.edit');
+        Route::delete('{review}',[ReviewController::class,'destroy'])->name('reviews.destroy');
+        Route::post('/update',[ReviewController::class,'update'])->name('reviews.update');
+        Route::post('/{review}/like',[ReviewController::class,'like'])->name('reviews.like');
+    });
+    Route::prefix('/favorite')->group(function(){
+        Route::get('/', [FavoriteController::class, 'list'])->name('favorites.index');
+    });
+
+    Route::get('/ranking',[RankingController::class,'ranking'])->name('ranking.index');
 });
 
-Route::prefix('/genre')->group(function(){
-    Route::get('/',[GenreController::class,'list'])->name('genres.index');
-    Route::get('/show/{genre}',[GenreController::class,'show'])->name('genres.show');
-    Route::get('/create',[GenreController::class,'create'])->name('genres.create');
-    Route::post('/store',[GenreController::class,'store'])->name('genres.store');
-    Route::get('/{genre}/edit',[GenreController::class,'edit'])->name('genres.edit');
-    Route::post('/{genre}/update',[GenreController::class,'update'])->name('genres.update');
-    Route::post('/destroy',[GenreController::class,'destroy'])->name('genres.destroy');
-});
-
-Route::prefix('/review')->group(function(){
-    Route::get('{review}/edit',[ReviewController::class,'edit'])->name('reviews.edit');
-    Route::post('/store',[ReviewController::class,'store'])->name('reviews.store');
-    Route::post('/update',[ReviewController::class,'update'])->name('reviews.update');
-    Route::post('/like',[ReviewController::class,'like'])->name('reviews.like');
-});
-Route::prefix('/favorite')->group(function(){
-    Route::get('/', [FavoriteController::class, 'list'])->name('favorites.index');
-    Route::post('/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-});
-
-Route::get('/ranking',[RankingController::class,'ranking'])->name('ranking.index');
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}',[BookController::class,'show'])->name('books.show');
