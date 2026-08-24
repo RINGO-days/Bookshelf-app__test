@@ -19,12 +19,14 @@ use App\Http\Controllers\RankingController;
 */
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}',[BookController::class,'show'])->name('books.show');
 
 Route::middleware('auth')->group(function(){
     Route::prefix('/books')->group(function(){
+        Route::post('/{book}/favorite',[BookController::class,'favorite'])->name('favorites.toggle');
+        Route::post('/{book}/review',[BookController::class,'review'])->name('reviews.store');
         Route::get('/create',[BookController::class,'create'])->name('books.create');
         Route::post('/store',[BookController::class,'store'])->name('books.store');
-        Route::get('/{book}',[BookController::class,'show'])->name('books.show');
         Route::get('/{book}/edit',[BookController::class,'edit'])->name('books.edit');
         Route::post('/{book}/update',[BookController::class,'update'])->name('books.update');
     });
@@ -41,13 +43,11 @@ Route::middleware('auth')->group(function(){
 
     Route::prefix('/review')->group(function(){
         Route::get('{review}/edit',[ReviewController::class,'edit'])->name('reviews.edit');
-        Route::post('/store',[ReviewController::class,'store'])->name('reviews.store');
         Route::post('/update',[ReviewController::class,'update'])->name('reviews.update');
         Route::post('/like',[ReviewController::class,'like'])->name('reviews.like');
     });
     Route::prefix('/favorite')->group(function(){
         Route::get('/', [FavoriteController::class, 'list'])->name('favorites.index');
-        Route::post('/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
     });
 
     Route::get('/ranking',[RankingController::class,'ranking'])->name('ranking.index');
