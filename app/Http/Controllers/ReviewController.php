@@ -11,4 +11,16 @@ class ReviewController extends Controller
     {
         return view('reviews.edit',compact('review'));
     }
+
+    public function like(Review $review)
+    {
+        $review->likedByUsers()->toggle(Auth()->id());
+
+        return back();
+    }
+    public function destroy(Review $review)
+    {
+        $review->delete();
+        return back();
+    }
 }

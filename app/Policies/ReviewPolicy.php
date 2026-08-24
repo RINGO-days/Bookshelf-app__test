@@ -19,4 +19,9 @@ class ReviewPolicy
     {
         return $user->id === $review->user_id;
     }
+
+    public function delete(User $user,Review $review)
+    {
+        return $user->id === $review->user_id;
+    }
 }

@@ -18,8 +18,6 @@ use App\Http\Controllers\RankingController;
 |
 */
 
-Route::get('/books', [BookController::class, 'index'])->name('books.index');
-Route::get('/books/{book}',[BookController::class,'show'])->name('books.show');
 
 Route::middleware('auth')->group(function(){
     Route::prefix('/books')->group(function(){
@@ -28,7 +26,8 @@ Route::middleware('auth')->group(function(){
         Route::get('/create',[BookController::class,'create'])->name('books.create');
         Route::post('/store',[BookController::class,'store'])->name('books.store');
         Route::get('/{book}/edit',[BookController::class,'edit'])->name('books.edit');
-        Route::post('/{book}/update',[BookController::class,'update'])->name('books.update');
+        Route::put('/{book}',[BookController::class,'update'])->name('books.update');
+        Route::delete('/{book}',[BookController::class,'destroy'])->name('books.destroy');
     });
 
     Route::prefix('/genre')->group(function(){
@@ -41,10 +40,11 @@ Route::middleware('auth')->group(function(){
         Route::post('/destroy',[GenreController::class,'destroy'])->name('genres.destroy');
     });
 
-    Route::prefix('/review')->group(function(){
+    Route::prefix('/reviews')->group(function(){
         Route::get('{review}/edit',[ReviewController::class,'edit'])->name('reviews.edit');
+        Route::delete('{review}',[ReviewController::class,'destroy'])->name('reviews.destroy');
         Route::post('/update',[ReviewController::class,'update'])->name('reviews.update');
-        Route::post('/like',[ReviewController::class,'like'])->name('reviews.like');
+        Route::post('/{review}/like',[ReviewController::class,'like'])->name('reviews.like');
     });
     Route::prefix('/favorite')->group(function(){
         Route::get('/', [FavoriteController::class, 'list'])->name('favorites.index');
@@ -52,3 +52,6 @@ Route::middleware('auth')->group(function(){
 
     Route::get('/ranking',[RankingController::class,'ranking'])->name('ranking.index');
 });
+
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}',[BookController::class,'show'])->name('books.show');
