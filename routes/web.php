@@ -30,14 +30,14 @@ Route::middleware('auth')->group(function(){
         Route::delete('/{book}',[BookController::class,'destroy'])->name('books.destroy');
     });
 
-    Route::prefix('/genre')->group(function(){
+    Route::prefix('/genres')->group(function(){
         Route::get('/',[GenreController::class,'list'])->name('genres.index');
-        Route::get('/show/{genre}',[GenreController::class,'show'])->name('genres.show');
+        Route::post('/',[GenreController::class,'store'])->name('genres.store');
         Route::get('/create',[GenreController::class,'create'])->name('genres.create');
-        Route::post('/store',[GenreController::class,'store'])->name('genres.store');
+        Route::get('/show/{genre}',[GenreController::class,'show'])->name('genres.show');
         Route::get('/{genre}/edit',[GenreController::class,'edit'])->name('genres.edit');
-        Route::post('/{genre}/update',[GenreController::class,'update'])->name('genres.update');
-        Route::post('/destroy',[GenreController::class,'destroy'])->name('genres.destroy');
+        Route::put('/{genre}',[GenreController::class,'update'])->name('genres.update');
+        Route::delete('/{genre}',[GenreController::class,'destroy'])->name('genres.destroy');
     });
 
     Route::prefix('/reviews')->group(function(){
