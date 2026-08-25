@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Review;
+use App\Http\Requests\ReviewRequest;
 
 class ReviewController extends Controller
 {
@@ -22,5 +23,11 @@ class ReviewController extends Controller
     {
         $review->delete();
         return back();
+    }
+
+    public function update(ReviewRequest $request,Review $review)
+    {
+        $review->update($request->validated());
+        return redirect("/books/{$review->book->id}");
     }
 }
