@@ -50,8 +50,8 @@ Route::middleware('auth')->group(function(){
         Route::get('/', [FavoriteController::class, 'list'])->name('favorites.index');
     });
 
-    Route::get('/ranking',[RankingController::class,'ranking'])->name('ranking.index');
 });
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::get('/books/{book}',[BookController::class,'show'])->name('books.show');
+Route::get('/ranking',[RankingController::class,'ranking'])->name('ranking.index');
