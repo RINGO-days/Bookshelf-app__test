@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function(){
     Route::prefix('/reviews')->group(function(){
         Route::get('{review}/edit',[ReviewController::class,'edit'])->name('reviews.edit');
         Route::delete('{review}',[ReviewController::class,'destroy'])->name('reviews.destroy');
-        Route::post('/update',[ReviewController::class,'update'])->name('reviews.update');
+        Route::put('/{review}',[ReviewController::class,'update'])->name('reviews.update');
         Route::post('/{review}/like',[ReviewController::class,'like'])->name('reviews.like');
     });
     Route::prefix('/favorite')->group(function(){
