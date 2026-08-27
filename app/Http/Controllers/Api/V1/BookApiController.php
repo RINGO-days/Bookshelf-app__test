@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Http\Resources\BookResource;
+use App\Http\Requests\Api\IndexBookRequest;
 
 class BookApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(IndexBookRequest $request)
     {
         $query = Book::query();
 
@@ -48,7 +49,11 @@ class BookApiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $book = Book::create($request->validated());
+
+        return (new BookResource($book))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
