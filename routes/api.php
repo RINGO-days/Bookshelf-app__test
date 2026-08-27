@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\LoginController;
 */
 
 Route::prefix('v1')->group(function(){
+    Route::apiResource('books', BookApiController::class)->only(['index', 'show']);
+
     Route::middleware('auth:sanctum')->group(function(){
         Route::apiResource('books',BookApiController::class)->only(['store','update','destroy']);
     });

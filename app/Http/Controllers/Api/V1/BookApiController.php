@@ -36,8 +36,7 @@ class BookApiController extends Controller
         $books = $query->with([
             'genres',
             'reviews',
-        ])
-            ->withAvg('reviews','rating')
+        ])->withAvg('reviews','rating')
             ->withCount('reviews')
             ->paginate($perPage);
 
@@ -69,7 +68,15 @@ class BookApiController extends Controller
      */
     public function show(Book $book)
     {
-        return $book;
+        $book->load([
+            'reviews',
+            'genres'
+        ])->loadAvg('reviews','rating')
+            ->loadCount('reviews');
+
+        return (new BookResource($book))
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
