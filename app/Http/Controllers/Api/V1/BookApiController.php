@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\Genre;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Api\IndexBookRequest;
+use App\Http\Requests\Api\StoreBookRequest;
 
 class BookApiController extends Controller
 {
@@ -47,9 +49,15 @@ class BookApiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        $book = Book::create($request->validated());
+        $validated = $request->validated();
+        $validated['user_id'] = Auth()->id();
+
+        $book = Book::create($validated);
+        $genresId = Genre::whereIn('name',$validated['genres'])
+            ->pluck('id');
+        $book->genres()->attach($genresId);
 
         return (new BookResource($book))
             ->response()

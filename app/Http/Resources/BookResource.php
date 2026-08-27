@@ -25,7 +25,7 @@ class BookResource extends JsonResource
             'description' => $this->description,
             'image_url' => $this->image_url,
             'user_id' => $this->user_id,
-            'genre' => $this->genres->pluck('name'),
+            'genres' => $this->genres->pluck('name'),
             'rating' => round($this->reviews_avg_rating,2),
             'number_of_reviews' => $this->reviews_count,
         ];

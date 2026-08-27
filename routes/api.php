@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\BookApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,5 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function(){
-    Route::apiResource('books',BookApiController::class);
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::apiResource('books',BookApiController::class)->only(['store','update','destroy']);
+    });
+    Route::post('login',[LoginController::class,'login']);
 });
