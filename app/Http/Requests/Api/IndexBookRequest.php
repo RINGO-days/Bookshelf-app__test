@@ -26,6 +26,7 @@ class IndexBookRequest extends FormRequest
             'per_page' => ['integer'],
             'genre' => ['string'],
             'published_date' => ['date'],
+            'page' => ['integer'],
             'keyword' => ['string']
         ];
     }
@@ -37,6 +38,7 @@ class IndexBookRequest extends FormRequest
             'per_page.integer' => '１ページの表示数の指定は整数で指定してください。',
             'genre.string' => 'ジャンル名を正しく入力してください。',
             'published_date.date' => '出版日はYYYY-MM-DD形式で入力してください。',
+            'page.integer' => 'ページ番号は整数で入力してください。',
             'keyword.string' => '正しいキーワードを入力してください。'
         ];
     }

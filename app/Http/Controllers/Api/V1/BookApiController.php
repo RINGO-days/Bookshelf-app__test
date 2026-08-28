@@ -23,7 +23,6 @@ class BookApiController extends Controller
         $query->when($request->query('published_date'),function($query,$publishedDate){
             return $query->where('published_date',$publishedDate);
         });
-
         $query->when($request->query('genre'),function($query,$genre){
             return $query->whereHas('genres',function($q) use ($genre){
                 $q->where('name',$genre);
