@@ -104,7 +104,7 @@ class BookApiController extends Controller
      */
     public function destroy(Book $book)
     {
-        $this->authorize('destroy',$book);
+        $this->authorize('delete',$book);
         $book->delete();
 
         return response()->json(null,204);
