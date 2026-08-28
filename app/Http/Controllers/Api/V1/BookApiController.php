@@ -9,6 +9,7 @@ use App\Models\Genre;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Api\IndexBookRequest;
 use App\Http\Requests\Api\StoreBookRequest;
+use App\Http\Requests\Api\UpdateBookRequest;
 
 class BookApiController extends Controller
 {
@@ -82,16 +83,30 @@ class BookApiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBookRequest $request,Book $book)
     {
-        //
+        $this->authorize('update',$book);
+        $book->update($request->validated());
+
+        $book->load([
+            'reviews',
+            'genres'
+        ])->loadAvg('reviews', 'rating')
+            ->loadCount('reviews');
+
+        return (new BookResource($book))
+            ->response()
+            ->setStatusCode(200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Book $book)
     {
-        //
+        $this->authorize('destroy',$book);
+        $book->delete();
+
+        return response()->json(null,204);
     }
 }
