@@ -11,10 +11,36 @@ use App\Http\Requests\BookCreateRequest;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::paginate(10);
-        return view('books.index',compact('books'));
+        $query = Book::query();
+        $query->when($request->query('keyword'),function($query,$keyword){
+            $query->where(function($q) use ($keyword){
+                $q->where('title', 'like', '%' . $keyword . '%')
+                    ->orWhere('author', 'like', '%' . $keyword . '%');
+            });
+        });
+        $query->when($request->query('genre'),function ($query, $genre) {
+            $query->whereHas('genres',function($q) use ($genre){
+                $q->where('genres.id',$genre);
+            });
+        });
+
+        $query->withAvg('reviews', 'rating')->withCount('reviews');
+        if($request->query('sort') === 'newest'){
+            $query->orderBy('updated_at','desc');
+        }elseif ($request->query('sort') === 'oldest'){
+            $query->orderBy('updated_at', 'asc');
+        }elseif($request->query('sort') === 'rating'){
+            $query->orderBy('reviews_avg_rating','desc');
+        }elseif(($request->query('sort') === 'title')){
+            $query->orderBy('title', 'asc');
+        }
+
+        $books = $query->paginate(10);
+
+        $genres = Genre::all();
+        return view('books.index',compact('books','genres'));
     }
 
     public function show(Book $book)

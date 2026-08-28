@@ -6,6 +6,8 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RankingController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReadingPlansController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +52,8 @@ Route::middleware('auth')->group(function(){
         Route::get('/', [FavoriteController::class, 'list'])->name('favorites.index');
     });
 
+    Route::get('/report',[ReportController::class,'index'])->name('reports.index');
+    Route::get('/reading-plans',[ReadingPlansController::class,'index'])->name('reading-plans.index');
 });
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
