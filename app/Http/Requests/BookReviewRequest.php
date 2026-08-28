@@ -30,8 +30,8 @@ class BookReviewRequest extends FormRequest
     {
         return [
             'rating.required' => '評価数を選択してください',
-            'comment.required' => 'レビューを記載してください',
-            'comment.max' => 'レビューは225文字以内で記載してください'
+            'comment.required' => 'レビューを入力してください',
+            'comment.max' => 'レビューは225文字以内で入力してください'
         ];
     }
 }
