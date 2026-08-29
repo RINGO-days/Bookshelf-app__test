@@ -8,6 +8,7 @@ use App\Models\Genre;
 use App\Models\Review;
 use App\Http\Requests\BookReviewRequest;
 use App\Http\Requests\BookCreateRequest;
+use Illuminate\Support\Facades\Http;
 
 class BookController extends Controller
 {
@@ -76,6 +77,22 @@ class BookController extends Controller
     {
         $genres = Genre::all();
         return view('books.create',compact('genres'));
+    }
+    public function isbnSearch($isbn)
+    {
+        $response = Http::get('https://www.googleapis.com/books/v1/volumes',[
+            'q' => 'isbn:'.$isbn,
+            'key' => env('GOOGLE_BOOKS_API_KEY')
+        ]);
+        $volumeInfo = $response->json('items.0.volumeInfo');
+
+        return response()->json([
+            'title' => $volumeInfo['title'] ?? '',
+            'author' => isset($volumeInfo['authors']) ? implode(', ', $volumeInfo['authors']) : '',
+            'description' => $volumeInfo['description'] ?? '',
+            'image_url' => $volumeInfo['imageLinks']['thumbnail'] ?? '',
+            'published_date' => $volumeInfo['publishedDate'] ?? '',
+        ]);
     }
 
     public function store(BookCreateRequest $request)

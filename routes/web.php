@@ -8,6 +8,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReadingPlansController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ Route::middleware('auth')->group(function(){
         Route::get('/{book}/edit',[BookController::class,'edit'])->name('books.edit');
         Route::put('/{book}',[BookController::class,'update'])->name('books.update');
         Route::delete('/{book}',[BookController::class,'destroy'])->name('books.destroy');
+        Route::get('/isbn/{isbn}', [BookController::class, 'isbnSearch']);
     });
 
     Route::prefix('/genres')->group(function(){
@@ -54,6 +56,7 @@ Route::middleware('auth')->group(function(){
 
     Route::get('/report',[ReportController::class,'index'])->name('reports.index');
     Route::get('/reading-plans',[ReadingPlansController::class,'index'])->name('reading-plans.index');
+    Route::get('/reading-plan',[NotificationController::class,'index'])->name('notifications.index');
 });
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
