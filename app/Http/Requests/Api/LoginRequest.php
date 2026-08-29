@@ -29,10 +29,10 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'メールアドレスを入力してください。',
+            'email.required' => 'メールアドレスは必須です。',
             'emial.email' => 'メールアドレス形式で入力してください。',
-            'password.required' => 'パスワードを入力してください。',
-            'password.min' => 'パスワードは８文字以上です。'
+            'password.required' => 'パスワードは必須です。',
+            'password.min' => 'パスワードは８文字以上で入力してください。'
         ];
     }
 }

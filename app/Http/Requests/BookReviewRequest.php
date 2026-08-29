@@ -23,15 +23,15 @@ class BookReviewRequest extends FormRequest
     {
         return [
             'rating' => ['required'],
-            'comment' => ['required','max:255']
+            'comment' => ['required','string']
         ];
     }
     public function messages()
     {
         return [
-            'rating.required' => '評価数を選択してください',
-            'comment.required' => 'レビューを入力してください',
-            'comment.max' => 'レビューは225文字以内で入力してください'
+            'rating.required' => '評価数を選択してください。',
+            'comment.required' => 'レビューは必須です。',
+            'comment.string' => 'レビューは文字列で入力してください。'
         ];
     }
 }
