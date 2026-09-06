@@ -24,11 +24,11 @@ class ReadingPlansCreateRequest extends FormRequest
     {
         return [
             'book_id' => 'required',
-            'target_date' => ['required','date']
+            'target_date' => ['required', 'date']
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'book_id.required' => '書籍を選択してください。',

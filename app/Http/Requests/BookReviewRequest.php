@@ -23,10 +23,10 @@ class BookReviewRequest extends FormRequest
     {
         return [
             'rating' => ['required'],
-            'comment' => ['required','string']
+            'comment' => ['required', 'string']
         ];
     }
-    public function messages()
+    public function messages(): array
     {
         return [
             'rating.required' => '評価数を選択してください。',

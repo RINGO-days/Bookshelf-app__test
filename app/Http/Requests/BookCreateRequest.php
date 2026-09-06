@@ -22,17 +22,17 @@ class BookCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required','string','max:255'],
-            'author' => ['required','string','max:255'],
-            'isbn' => ['required','string','digits:13'],
-            'published_date' => ['required','date'],
-            'description' => ['nullable','string'],
-            'image_url' => ['nullable','url','string','max:255'],
-            'genres' => ['required','array','exists:genres,name']
+            'title' => ['required', 'string', 'max:255'],
+            'author' => ['required', 'string', 'max:255'],
+            'isbn' => ['required', 'string', 'digits:13'],
+            'published_date' => ['required', 'date'],
+            'description' => ['nullable', 'string'],
+            'image_url' => ['nullable', 'url', 'string', 'max:255'],
+            'genres' => ['required', 'array', 'exists:genres,name']
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'title.required' => 'タイトルは必須です。',

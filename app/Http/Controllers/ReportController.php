@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Enums\ReadingPlanStatus;
-use App\Models\Book;
-use App\Models\Review;
-use App\Models\Genre;
+use Illuminate\View\View;
 
 class ReportController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $user = auth()->user();
         $stats = [
@@ -49,7 +47,7 @@ class ReportController extends Controller
                     });
                 })
                 ->groupBy('genre_id')
-                ->map(function ($group,$genreId){
+                ->map(function ($group, $genreId) {
                     return [
                         'id' => $genreId,
                         'name' => $group->first()['name'],

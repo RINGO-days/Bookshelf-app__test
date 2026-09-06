@@ -22,11 +22,11 @@ class GenreCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','max:20','string']
+            'name' => ['required', 'max:20', 'string']
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'name.required' => 'ジャンル名は必須です。',

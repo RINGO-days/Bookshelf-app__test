@@ -8,10 +8,12 @@ use App\Models\Book;
 use App\Enums\ReadingPlanStatus;
 use App\Http\Requests\ReadingPlansCreateRequest;
 use App\Http\Requests\ReadingPlansEditRequest;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ReadingPlansController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $currentStatus = $request->query('status');
         $readingPlans = ReadingPlan::when($request->query('status'), function ($query) use ($currentStatus) {
@@ -21,13 +23,13 @@ class ReadingPlansController extends Controller
         return view('reading-plans.index', compact('currentStatus', 'readingPlans'));
     }
 
-    public function create()
+    public function create(): View
     {
         $books = Book::all();
         return view('reading-plans.create', compact('books'));
     }
 
-    public function store(ReadingPlansCreateRequest $request)
+    public function store(ReadingPlansCreateRequest $request): RedirectResponse
     {
         ReadingPlan::create([
             'user_id' => auth()->id(),
@@ -38,22 +40,24 @@ class ReadingPlansController extends Controller
         return redirect('/reading-plans');
     }
 
-    public function complete(ReadingPlan $plan)
+    public function complete(ReadingPlan $plan): RedirectResponse
     {
         $plan->update([
             'completed_at' => now(),
             'status' => ReadingPlanStatus::Completed
         ]);
+
         return redirect('/reading-plans')->with('success', '読書計画のステータスを「読了」にしました。');
     }
 
-    public function edit($plan)
+    public function edit($plan): View
     {
         $readingPlan = ReadingPlan::find($plan);
+
         return view('reading-plans.edit', compact('readingPlan'));
     }
 
-    public function update(ReadingPlansEditRequest $request, ReadingPlan $plan)
+    public function update(ReadingPlansEditRequest $request, ReadingPlan $plan): RedirectResponse
     {
         $plan->update([
             'target_date' => $request->target_date,
@@ -62,7 +66,7 @@ class ReadingPlansController extends Controller
         return redirect('reading-plans')->with('success', '期日を変更しました。');
     }
 
-    public function destroy(ReadingPlan $plan)
+    public function destroy(ReadingPlan $plan): RedirectResponse
     {
         $plan->delete();
 

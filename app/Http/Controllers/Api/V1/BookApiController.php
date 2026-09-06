@@ -10,13 +10,14 @@ use App\Http\Resources\BookResource;
 use App\Http\Requests\Api\IndexBookRequest;
 use App\Http\Requests\Api\StoreBookRequest;
 use App\Http\Requests\Api\UpdateBookRequest;
+use Illuminate\Http\JsonResponse;
 
 class BookApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(IndexBookRequest $request)
+    public function index(IndexBookRequest $request) : JsonResponse
     {
         $query = Book::query();
 
@@ -48,7 +49,7 @@ class BookApiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBookRequest $request)
+    public function store(StoreBookRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $validated['user_id'] = Auth()->id();
@@ -66,7 +67,7 @@ class BookApiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show(Book $book): JsonResponse
     {
         $book->load([
             'reviews',
@@ -82,7 +83,7 @@ class BookApiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBookRequest $request,Book $book)
+    public function update(UpdateBookRequest $request,Book $book): JsonResponse
     {
         $this->authorize('update',$book);
         $book->update($request->validated());
@@ -101,7 +102,7 @@ class BookApiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy(Book $book): JsonResponse
     {
         $this->authorize('delete',$book);
         $book->delete();

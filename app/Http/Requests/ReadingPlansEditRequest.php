@@ -26,7 +26,7 @@ class ReadingPlansEditRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'target_date.required' => '期日は必須です。',
