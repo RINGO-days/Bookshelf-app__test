@@ -12,7 +12,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            $remainedPlans = ReadingPlan::where('target_date', '<', now())
+                ->where('status', '!=', 'expired')
+                ->get();
+
+            $remainedPlans->map(function ($plan) {
+                $plan->update([
+                    'status' => 'experid'
+                ]);
+
+                $plan->user->notify(new PlanRemainderNotification($plan));
+            });
+        })->daily();
     }
 
     /**

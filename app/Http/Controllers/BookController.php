@@ -8,6 +8,7 @@ use App\Models\Genre;
 use App\Models\Review;
 use App\Http\Requests\BookReviewRequest;
 use App\Http\Requests\BookCreateRequest;
+use App\Notifications\FavoriteBook;
 use Illuminate\Support\Facades\Http;
 
 class BookController extends Controller
@@ -28,6 +29,7 @@ class BookController extends Controller
         });
 
         $query->withAvg('reviews', 'rating')->withCount('reviews');
+
         if($request->query('sort') === 'newest'){
             $query->orderBy('updated_at','desc');
         }elseif ($request->query('sort') === 'oldest'){
@@ -53,6 +55,10 @@ class BookController extends Controller
     {
         $user = Auth()->user();
         $user->favoriteBooks()->toggle($book->id);
+
+        if($book->user_id !== auth()->id()){
+            $book->user->notify(new FavoriteBook($book,auth()->user()));
+        }
 
         return back();
     }

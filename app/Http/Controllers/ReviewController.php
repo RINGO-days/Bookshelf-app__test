@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Http\Requests\ReviewRequest;
+use App\Notifications\LikedReview;
 
 class ReviewController extends Controller
 {
@@ -16,6 +17,12 @@ class ReviewController extends Controller
     public function like(Review $review)
     {
         $review->likedByUsers()->toggle(Auth()->id());
+
+        $reviewOwner = $review->user;
+
+        if($reviewOwner->id !== auth()->id()){
+            $reviewOwner->notify(new LikedReview($review,auth()->user()));
+        }
 
         return back();
     }
