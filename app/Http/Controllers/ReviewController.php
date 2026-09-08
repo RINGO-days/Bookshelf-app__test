@@ -8,6 +8,7 @@ use App\Http\Requests\ReviewRequest;
 use App\Notifications\LikedReview;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class ReviewController extends Controller
 {
@@ -49,7 +50,9 @@ class ReviewController extends Controller
      */
     public function destroy(Review $review): RedirectResponse
     {
-        $review->delete();
+        DB::transaction(function()use($review){
+            $review->delete();
+        });
 
         return back();
     }
@@ -62,7 +65,9 @@ class ReviewController extends Controller
      */
     public function update(ReviewRequest $request, Review $review): RedirectResponse
     {
-        $review->update($request->validated());
+        DB::transaction(function()use($request,$review){
+            $review->update($request->validated());
+        });
 
         return redirect("/books/{$review->book->id}");
     }

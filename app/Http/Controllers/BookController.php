@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
@@ -97,10 +98,12 @@ class BookController extends Controller
      */
     public function review(BookReviewRequest $request, Book $book): RedirectResponse
     {
-        Review::create(array_merge($request->validated(), [
-            'user_id' => Auth()->id(),
-            'book_id' => $book->id,
-        ]));
+        DB::transaction(function() use($request,$book){
+            Review::create(array_merge($request->validated(), [
+                'user_id' => Auth()->id(),
+                'book_id' => $book->id,
+            ]));
+        });
 
         return back();
     }
@@ -113,8 +116,9 @@ class BookController extends Controller
      */
     public function destroy(Book $book): RedirectResponse
     {
-        $book->delete();
-
+        DB::transaction(function() use($book){
+            $book->delete();
+        });
         return redirect('/books');
     }
 
@@ -161,9 +165,11 @@ class BookController extends Controller
      */
     public function store(BookCreateRequest $request): RedirectResponse
     {
-        Book::create(array_merge($request->validated(), [
-            'user_id' => Auth()->id()
-        ]));
+        DB::transaction(function() use($request){
+            Book::create(array_merge($request->validated(), [
+                'user_id' => Auth()->id()
+            ]));
+        });
 
         return redirect('/books');
     }
@@ -190,8 +196,10 @@ class BookController extends Controller
      */
     public function update(BookCreateRequest $request, Book $book): RedirectResponse
     {
-        $book->update($request->validated());
-        $book->genres()->attach($request->genres);
+        DB::transaction(function() use($request,$book){
+            $book->update($request->validated());
+            $book->genres()->attach($request->genres);
+        });
 
         return redirect("/books/$book->id");
     }

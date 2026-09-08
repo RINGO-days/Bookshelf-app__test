@@ -7,6 +7,7 @@ use App\Models\Genre;
 use App\Http\Requests\GenreCreateRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class GenreController extends Controller
 {
@@ -53,7 +54,9 @@ class GenreController extends Controller
      */
     public function store(GenreCreateRequest $request): RedirectResponse
     {
-        Genre::create($request->validated());
+        DB::transaction(function() use($request){
+            Genre::create($request->validated());
+        });
 
         return redirect('/genres')->with('success', "「{$request->name}」を追加しました。");
     }
@@ -77,7 +80,10 @@ class GenreController extends Controller
     public function update(GenreCreateRequest $request, Genre $genre): RedirectResponse
     {
         $oldName = $genre->name;
-        $genre->update($request->validated());
+
+        DB::transaction(function() use($request,$genre){
+            $genre->update($request->validated());
+        });
 
         return redirect("/genres")->with('success', "「{$oldName}」を「{$genre->name}」に変更しました。");
     }
@@ -90,10 +96,13 @@ class GenreController extends Controller
      */
     public function destroy(Genre $genre): RedirectResponse
     {
-        if ($genre->books()->exists()) {
-            return back()->with('error', "「{$genre->name}」に紐付いている書籍があるため、削除できません。");
-        }
-        $genre->delete();
+        DB::transaction(function() use($genre){
+            if ($genre->books()->exists()) {
+                return back()->with('error', "「{$genre->name}」に紐付いている書籍があるため、削除できません。");
+            }
+            $genre->delete();
+        });
+
         return back()->with('success', "「{$genre->name}」を削除しました。");;
     }
 }

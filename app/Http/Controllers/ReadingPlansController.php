@@ -10,6 +10,7 @@ use App\Http\Requests\ReadingPlansCreateRequest;
 use App\Http\Requests\ReadingPlansEditRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class ReadingPlansController extends Controller
 {
@@ -50,11 +51,13 @@ class ReadingPlansController extends Controller
      */
     public function store(ReadingPlansCreateRequest $request): RedirectResponse
     {
-        ReadingPlan::create([
-            'user_id' => auth()->id(),
-            'book_id' => $request->validated('book_id'),
-            'target_date' => $request->validated('target_date')
-        ]);
+        DB::transaction(function()use($request){
+            ReadingPlan::create([
+                'user_id' => auth()->id(),
+                'book_id' => $request->validated('book_id'),
+                'target_date' => $request->validated('target_date')
+            ]);
+        });
 
         return redirect('/reading-plans');
     }
@@ -67,10 +70,12 @@ class ReadingPlansController extends Controller
      */
     public function complete(ReadingPlan $plan): RedirectResponse
     {
-        $plan->update([
-            'completed_at' => now(),
-            'status' => ReadingPlanStatus::Completed
-        ]);
+        DB::transaction(function()use($plan){
+            $plan->update([
+                'completed_at' => now(),
+                'status' => ReadingPlanStatus::Completed
+            ]);
+        });
 
         return redirect('/reading-plans')->with('success', '読書計画のステータスを「読了」にしました。');
     }
@@ -97,9 +102,11 @@ class ReadingPlansController extends Controller
      */
     public function update(ReadingPlansEditRequest $request, ReadingPlan $plan): RedirectResponse
     {
-        $plan->update([
-            'target_date' => $request->target_date,
-        ]);
+        DB::transaction(function()use($request,$plan){
+            $plan->update([
+                'target_date' => $request->target_date,
+            ]);
+        });
 
         return redirect('reading-plans')->with('success', '期日を変更しました。');
     }
@@ -112,7 +119,9 @@ class ReadingPlansController extends Controller
      */
     public function destroy(ReadingPlan $plan): RedirectResponse
     {
-        $plan->delete();
+        DB::transaction(function()use($plan){
+            $plan->delete();
+        });
 
         return redirect('/reading-plans')->with('success', '読書計画を削除しました。');
     }
