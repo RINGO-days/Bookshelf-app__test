@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PlanReminder extends Notification
+class PlanReminderNotification extends Notification
 {
     use Queueable;
 
