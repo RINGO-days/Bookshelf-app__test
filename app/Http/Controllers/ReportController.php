@@ -8,6 +8,24 @@ use Illuminate\View\View;
 
 class ReportController extends Controller
 {
+    /**
+     * ユーザーの読書の統計データの画面を表示する
+     * 二次元配列を使用し中に統計データを入れていく
+     * **[summary] ユーザーのレビューした総回数、読書計画で読了になっている計画の数、レビューの平均の評価数を取得
+     *
+     * **[rating_distribution] 評価数として０から４までのキーの数字を用意する（Viewファイルで＋１される）
+     * mapWithKeyにて'評価数' => 'レビューのカウント' の配列を作成
+     *
+     * **[top_rated_books] ユーザーがレビューした書籍の高評価順に５件取得し、mapで書籍情報の配列を作成
+     *
+     * **[genre_rating] ユーザーがレビューした書籍とそのジャンルを取得する
+     * flatMapにて一度すべてのデータをただの配列に変換し、mapにてジャンルごとのID、名前、評価数の連想配列を作成
+     * その後groupBy(genreId)にてジャンルごとにさきほどの連想配列をまとめる
+     * mapにてジャンルID、ジャンル名、ジャンル配列の件数、評価数の平均の配列に整形
+     * 最後に平均評価数の高い順に並べて、キー名がジャンルIDになっているためvalueで連番に振り直す
+     *
+     * @return View
+     */
     public function index(): View
     {
         $user = auth()->user();

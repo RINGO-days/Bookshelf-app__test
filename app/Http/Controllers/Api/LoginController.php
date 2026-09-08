@@ -10,8 +10,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
 
 
-class LoginController extends Controller 
+class LoginController extends Controller
 {
+    /**
+     * API使用時のログイントークン送信アクション
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email',$request->validated('email'))

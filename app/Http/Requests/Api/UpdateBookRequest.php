@@ -4,6 +4,16 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read string|null $title
+ * @property-read string|null $author
+ * @property-read int|null $isbn
+ * @property-read string|null $published_date
+ * @property-read string|null $description
+ * @property-read string|null $image_url
+ * @property-read array<int,string>|null $genres
+
+ */
 class UpdateBookRequest extends FormRequest
 {
     /**

@@ -5,6 +5,13 @@ namespace App\Http\Requests\Api;
 use Illuminate\Foundation\Http\FormRequest;
 use Override;
 
+/**
+ * @property-read int|null $per_page
+ * @property-read string|null $genre
+ * @property-read string|null $published_date
+ * @property-read int|null $page
+ * @property-read string|null $keyword
+ */
 class IndexBookRequest extends FormRequest
 {
     /**

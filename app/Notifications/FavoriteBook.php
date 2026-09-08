@@ -44,7 +44,7 @@ class FavoriteBook extends Notification
             'book_title' => $this->book->title,
             'liker_name' => $this->liker->name,
             'title' => '書籍への「お気に入り」',
-            'body' => "あなたが登録した書籍（{$this->book->title}）が、{$this->liker->name}に「お気に入り」されました。"
+            'body' => "あなたが登録した書籍（{$this->book->title}）が、{$this->liker->name}に「お気に入り」されました。",
             'timing' => now()->diffForHumans(),
         ];
     }

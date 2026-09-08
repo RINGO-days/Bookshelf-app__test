@@ -5,6 +5,10 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Override;
 
+/**
+ * @property-read int $book_id
+ * @property-read string $target_date
+ */
 class ReadingPlansCreateRequest extends FormRequest
 {
     /**

@@ -10,6 +10,11 @@ use Illuminate\Http\RedirectResponse;
 
 class GenreController extends Controller
 {
+    /**
+     * ジャンル一覧の画面を表示する
+     *
+     * @return View
+     */
     public function list(): View
     {
         $genres = Genre::withCount('books')->get();
@@ -17,34 +22,72 @@ class GenreController extends Controller
         return view('genres.index', compact('genres'));
     }
 
+    /**
+     * ジャンル一覧画面から選択したジャンルに紐付いている書籍を表示する
+     *
+     * @param Genre $genre
+     * @return View
+     */
     public function show(Genre $genre): View
     {
         $books = $genre->books()->paginate(6);
+
         return view('genres.show', compact('genre', 'books'));
     }
 
+    /**
+     * 新規でジャンルを作成する画面を表示表示する
+     *
+     * @return View
+     */
     public function create(): View
     {
         return view('genres.create');
     }
+
+    /**
+     * ジャンル作成画面でジャンルを作成するアクション
+     *
+     * @param GenreCreateRequest $request
+     * @return RedirectResponse
+     */
     public function store(GenreCreateRequest $request): RedirectResponse
     {
         Genre::create($request->validated());
+
         return redirect('/genres')->with('success', "「{$request->name}」を追加しました。");
     }
 
+    /**
+     * 登録したジャンルを編集する画面を表示
+     *
+     * @return View
+     */
     public function edit(Genre $genre): View
     {
         return view('genres.edit', compact('genre'));
     }
 
+    /**
+     * ジャンル編集画面からジャンルを更新するアクション
+     *
+     * @param GenreCreateRequest $request
+     * @return RedirectResponse
+     */
     public function update(GenreCreateRequest $request, Genre $genre): RedirectResponse
     {
         $oldName = $genre->name;
         $genre->update($request->validated());
+
         return redirect("/genres")->with('success', "「{$oldName}」を「{$genre->name}」に変更しました。");
     }
 
+    /**
+     * ジャンル一覧画面から登録されているジャンルを削除するアクション
+     *
+     * @param Genre $genre
+     * @return RedirectResponse
+     */
     public function destroy(Genre $genre): RedirectResponse
     {
         if ($genre->books()->exists()) {

@@ -4,6 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read string $title
+ * @property-read string $author
+ * @property-read int $isbn
+ * @property-read string $published_date
+ * @property-read string|null $description
+ * @property-read string|null $image_url
+ * @property-read array<int,string> $genres
+
+ */
 class BookCreateRequest extends FormRequest
 {
     /**

@@ -13,22 +13,41 @@ use Illuminate\Http\RedirectResponse;
 
 class ReadingPlansController extends Controller
 {
+    /**
+     * 読書計画画面にて計画一覧を表示する
+     * クエリパラメータよりステータスに応じた通知を取得する
+     *
+     * @param Request $request
+     * @return View
+     */
     public function index(Request $request): View
     {
         $currentStatus = $request->query('status');
-        $readingPlans = ReadingPlan::when($request->query('status'), function ($query) use ($currentStatus) {
+        $readingPlans = ReadingPlan::when($currentStatus, function ($query) use ($currentStatus) {
             $query->where('status', $currentStatus);
         })->get();
 
         return view('reading-plans.index', compact('currentStatus', 'readingPlans'));
     }
 
+    /**
+     * 新規で読書計画を作成する画面
+     *
+     * @return View
+     */
     public function create(): View
     {
         $books = Book::all();
+
         return view('reading-plans.create', compact('books'));
     }
 
+    /**
+     * 読書計画作成画面にて読書計画を作成するアクション
+     *
+     * @param ReadingPlansCreateRequest $request
+     * @return RedirectResponse
+     */
     public function store(ReadingPlansCreateRequest $request): RedirectResponse
     {
         ReadingPlan::create([
@@ -40,6 +59,12 @@ class ReadingPlansController extends Controller
         return redirect('/reading-plans');
     }
 
+    /**
+     * 読書計画一覧画面にて、読書計画を読了に更新するアクション
+     *
+     * @param ReadingPlan $plan
+     * @return RedirectResponse
+     */
     public function complete(ReadingPlan $plan): RedirectResponse
     {
         $plan->update([
@@ -50,6 +75,12 @@ class ReadingPlansController extends Controller
         return redirect('/reading-plans')->with('success', '読書計画のステータスを「読了」にしました。');
     }
 
+    /**
+     * 読書計画を編集する画面の表示
+     *
+     * @param int $plan
+     * @return View
+     */
     public function edit($plan): View
     {
         $readingPlan = ReadingPlan::find($plan);
@@ -57,6 +88,13 @@ class ReadingPlansController extends Controller
         return view('reading-plans.edit', compact('readingPlan'));
     }
 
+    /**
+     * 読書計画編集画面にて読書計画を更新するアクション
+     *
+     * @param ReadingPlansEditRequest $request
+     * @param ReadingPlan $plan
+     * @return RedirectResponse
+     */
     public function update(ReadingPlansEditRequest $request, ReadingPlan $plan): RedirectResponse
     {
         $plan->update([
@@ -66,6 +104,12 @@ class ReadingPlansController extends Controller
         return redirect('reading-plans')->with('success', '期日を変更しました。');
     }
 
+    /**
+     * 読書計画一覧画面にて、読書計画を削除するアクション
+     *
+     * @param ReadingPlan $plan
+     * @return RedirectResponse
+     */
     public function destroy(ReadingPlan $plan): RedirectResponse
     {
         $plan->delete();

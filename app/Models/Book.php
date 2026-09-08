@@ -7,7 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $author
+ * @property string $isbn
+ * @property Carbon $published_date
+ * @property string $description
+ * @property string $image_url
+ * @property int $user_id
+ *
+ * @property-read Collection<int,Genre> $genres
+ * @property-read Collection<int,Review> $reviews
+ * @property-read User|null $user
+ */
 class Book extends Model
 {
     use HasFactory;
