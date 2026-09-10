@@ -34,7 +34,7 @@ class BookReviewRequest extends FormRequest
     {
         return [
             'rating.required' => '評価数を選択してください。',
-            'comment.required' => 'レビューは必須です。',
+            'comment.required' => 'コメントは必須です。',
             'comment.string' => 'レビューは文字列で入力してください。'
         ];
     }

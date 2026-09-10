@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Review;
+use App\Models\User;
 
 class ReviewLikeTableSeeder extends Seeder
 {
@@ -13,15 +14,16 @@ class ReviewLikeTableSeeder extends Seeder
      */
     public function run(): void
     {
-        for($reviewId = 1; $reviewId <=32; $reviewId++){
-            $review = Review::find($reviewId);
-            $allUserId = [1,2,3,4,5];
+
+        $reviews = Review::all();
+        foreach($reviews as $review){
+            $allUserId = User::pluck('id')->toArray();
 
             $selfUserId = $review->user_id;
 
-            $targetUserId = array_diff($allUserId,[$selfUserId]);
+            $targetUserId = array_diff($allUserId, [$selfUserId]);
             shuffle($targetUserId);
-            $likeCount = rand(0,3);
+            $likeCount = rand(1, 3);
             $randomUserId = collect($targetUserId)->random($likeCount)->all();
 
             $review->likedByUsers()->syncWithoutDetaching($randomUserId);

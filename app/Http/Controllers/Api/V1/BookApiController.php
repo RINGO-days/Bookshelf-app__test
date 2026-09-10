@@ -62,7 +62,7 @@ class BookApiController extends Controller
         $validated['user_id'] = Auth()->id();
 
         $book = Book::create($validated);
-        $genresId = Genre::whereIn('name', $validated['genres'])
+        $genresId = Genre::whereIn('id', $validated['genres'])
             ->pluck('id');
         $book->genres()->attach($genresId);
 
@@ -102,6 +102,8 @@ class BookApiController extends Controller
     {
         $this->authorize('update', $book);
         $book->update($request->validated());
+        $genreId = Genre::whereIn('name', $request->validated('genres'))->pluck('id');
+        $book->genres()->sync($genreId);
 
         $book->load([
             'reviews',

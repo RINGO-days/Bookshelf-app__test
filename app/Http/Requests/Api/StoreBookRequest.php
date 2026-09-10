@@ -37,7 +37,7 @@ class StoreBookRequest extends FormRequest
             'published_date' => ['required', 'date'],
             'description' => ['nullable', 'string'],
             'image_url' => ['nullable', 'url', 'string', 'max:255'],
-            'genres' => ['required', 'array', 'exists:genres,name']
+            'genres' => ['required', 'array', 'exists:genres,id']
         ];
     }
     public function messages()

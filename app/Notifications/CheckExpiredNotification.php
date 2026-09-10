@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PlanReminderNotification extends Notification
+class CheckExpiredNotification extends Notification
 {
     use Queueable;
 
@@ -40,9 +40,8 @@ class PlanReminderNotification extends Notification
         return [
             'plan_id' => $this->plan->id,
             'book_title' => $this->plan->book->title,
-            'title' => '読書計画の期日の3日前',
-            'body' => "{$this->plan->book->title}の読書の期日が3日後となりました。"
-
+            'title' => '読書計画の期日の超過',
+            'body' => "{$this->plan->book->title}の読書の期日が過ぎました。"
         ];
     }
 }
