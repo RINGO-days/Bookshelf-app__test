@@ -86,7 +86,7 @@ class BookController extends Controller
             $book->user->notify(new FavoriteBook($book, auth()->user()));
         }
 
-        return back();
+        return back()->with('success','お気に入り登録しました。');
     }
 
     /**
@@ -105,7 +105,7 @@ class BookController extends Controller
             ]));
         });
 
-        return back();
+        return back()->with('success', 'レビューを投稿しました');
     }
 
     /**
@@ -119,7 +119,7 @@ class BookController extends Controller
         DB::transaction(function() use($book){
             $book->delete();
         });
-        return redirect('/books');
+        return redirect('/books')->with('success', "「{$book->title}」を削除しました。");
     }
 
     /**
@@ -165,14 +165,15 @@ class BookController extends Controller
      */
     public function store(BookCreateRequest $request): RedirectResponse
     {
-        DB::transaction(function() use($request){
-            $book = Book::create(array_merge($request->validated(), [
+        $book = DB::transaction(function() use($request){
+            $newBook = Book::create(array_merge($request->validated(), [
                 'user_id' => Auth()->id()
             ]));
-            $book->genres()->attach($request->genres);
+            $newBook->genres()->attach($request->genres);
+            return $newBook;
         });
 
-        return redirect('/books');
+        return redirect('/books')->with('success', "{$book->title}を登録しました。");
     }
 
     /**
@@ -202,6 +203,6 @@ class BookController extends Controller
             $book->genres()->attach($request->genres);
         });
 
-        return redirect("/books/$book->id");
+        return redirect("/books/$book->id")->with('success',"{$book->title}を変更しました。");
     }
 }
