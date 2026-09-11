@@ -169,7 +169,7 @@ class BookController extends Controller
             $newBook = Book::create(array_merge($request->validated(), [
                 'user_id' => Auth()->id()
             ]));
-            $newBook->genres()->attach($request->genres);
+            $newBook->genres()->sync($request->genres);
             return $newBook;
         });
 
@@ -200,7 +200,7 @@ class BookController extends Controller
     {
         DB::transaction(function() use($request,$book){
             $book->update($request->validated());
-            $book->genres()->attach($request->genres);
+            $book->genres()->sync($request->genres);
         });
 
         return redirect("/books/$book->id")->with('success',"{$book->title}を変更しました。");
