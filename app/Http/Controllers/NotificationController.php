@@ -36,6 +36,6 @@ class NotificationController extends Controller
                 'read_at' => now()
             ]);
 
-        return back();
+        return back()->with('success','通知を既読にしました。');
     }
 }
