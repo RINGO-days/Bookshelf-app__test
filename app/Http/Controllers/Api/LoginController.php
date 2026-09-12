@@ -7,11 +7,18 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Api\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\JsonResponse;
 
 
 class LoginController extends Controller
 {
-    public function login(LoginRequest $request)
+    /**
+     * API使用時のログイントークン送信アクション
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
+     */
+    public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email',$request->validated('email'))
             ->first();

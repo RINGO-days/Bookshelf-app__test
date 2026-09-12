@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -34,6 +35,13 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function(AuthorizationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'この書籍を管理する権限がありません。'
+                ], 403);
+            }
+        });
+        $this->renderable(function(AccessDeniedHttpException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'message' => 'この書籍を管理する権限がありません。'

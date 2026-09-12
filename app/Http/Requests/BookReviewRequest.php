@@ -4,6 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read int $rating
+ * @property-read string $comment
+ */
 class BookReviewRequest extends FormRequest
 {
     /**
@@ -23,15 +27,15 @@ class BookReviewRequest extends FormRequest
     {
         return [
             'rating' => ['required'],
-            'comment' => ['required','max:255']
+            'comment' => ['required', 'string']
         ];
     }
-    public function messages()
+    public function messages(): array
     {
         return [
-            'rating.required' => '評価数を選択してください',
-            'comment.required' => 'レビューを記載してください',
-            'comment.max' => 'レビューは225文字以内で記載してください'
+            'rating.required' => '評価数を選択してください。',
+            'comment.required' => 'コメントは必須です。',
+            'comment.string' => 'レビューは文字列で入力してください。'
         ];
     }
 }

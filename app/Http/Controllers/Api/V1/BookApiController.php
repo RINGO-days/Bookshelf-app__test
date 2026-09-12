@@ -10,34 +10,38 @@ use App\Http\Resources\BookResource;
 use App\Http\Requests\Api\IndexBookRequest;
 use App\Http\Requests\Api\StoreBookRequest;
 use App\Http\Requests\Api\UpdateBookRequest;
+use Illuminate\Http\JsonResponse;
 
 class BookApiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 絞り込み可能な書籍一覧のindexアクション
+     * クエリパラメータによって、出版日、ジャンル、部分一致のキーワード検索、１ページの表示件数を指定し、情報を取得
+     *
+     * @param IndexBookRequest $request
+     * @return JsonResponse
      */
-    public function index(IndexBookRequest $request)
+    public function index(IndexBookRequest $request): JsonResponse
     {
         $query = Book::query();
 
-        $query->when($request->query('published_date'),function($query,$publishedDate){
-            return $query->where('published_date',$publishedDate);
+        $query->when($request->query('published_date'), function ($query, $publishedDate) {
+            return $query->where('published_date', $publishedDate);
         });
-
-        $query->when($request->query('genre'),function($query,$genre){
-            return $query->whereHas('genres',function($q) use ($genre){
-                $q->where('name',$genre);
+        $query->when($request->query('genre'), function ($query, $genre) {
+            return $query->whereHas('genres', function ($q) use ($genre) {
+                $q->where('name', $genre);
             });
         });
-        $query->when($request->query('keyword'),function($query,$keyword){
-            $query->where('title','like','%'.$keyword.'%');
+        $query->when($request->query('keyword'), function ($query, $keyword) {
+            $query->where('title', 'like', '%' . $keyword . '%');
         });
 
         $perPage = $request->query('per_page', 10);
         $books = $query->with([
             'genres',
             'reviews',
-        ])->withAvg('reviews','rating')
+        ])->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->paginate($perPage);
 
@@ -47,15 +51,18 @@ class BookApiController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 送られてきたbodyデータによって、書籍を登録するstoreアクション
+     *
+     * @param StoreBookRequest $request
+     * @return JsonResponse
      */
-    public function store(StoreBookRequest $request)
+    public function store(StoreBookRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $validated['user_id'] = Auth()->id();
 
         $book = Book::create($validated);
-        $genresId = Genre::whereIn('name',$validated['genres'])
+        $genresId = Genre::whereIn('id', $validated['genres'])
             ->pluck('id');
         $book->genres()->attach($genresId);
 
@@ -65,14 +72,17 @@ class BookApiController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * パスパラメータに書籍のIDを指定して、書籍の情報を取得するshowアクション
+     *
+     * @param Book $book
+     * @return JsonResponse
      */
-    public function show(Book $book)
+    public function show(Book $book): JsonResponse
     {
         $book->load([
             'reviews',
             'genres'
-        ])->loadAvg('reviews','rating')
+        ])->loadAvg('reviews', 'rating')
             ->loadCount('reviews');
 
         return (new BookResource($book))
@@ -81,12 +91,19 @@ class BookApiController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * 本人のみ可能のpolicy
+     * パスパラメータに書籍IDを入力し、bodyデータに変更するデータを送信し更新を行うupdateアクション
+     *
+     * @param UpdateBookRequest $request
+     * @param Book #book
+     * @return JsonResponse
      */
-    public function update(UpdateBookRequest $request,Book $book)
+    public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
-        $this->authorize('update',$book);
+        $this->authorize('update', $book);
         $book->update($request->validated());
+        $genreId = Genre::whereIn('name', $request->validated('genres'))->pluck('id');
+        $book->genres()->sync($genreId);
 
         $book->load([
             'reviews',
@@ -100,13 +117,17 @@ class BookApiController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 本人のみ可能のpolicy
+     * パスパラメータに書籍IDを入力し、書籍を削除するdestroyアクション
+     *
+     * @param Book $book
+     * @return JsonResponse
      */
-    public function destroy(Book $book)
+    public function destroy(Book $book): JsonResponse
     {
-        $this->authorize('delete',$book);
+        $this->authorize('delete', $book);
         $book->delete();
 
-        return response()->json(null,204);
+        return response()->json(null, 204);
     }
 }
