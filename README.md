@@ -1,5 +1,7 @@
-#  📖  time-tracker__test
+#  📖  bookshlef-app__test
 coachtech模擬案件　書籍管理アプリ
+## 製作者
+田代　晃世
 ## 概要
 ### 目的
 クライアント（コーチ）とのアプリケーションの設計に関しての詳細を協議しながら、開発を進めることで、実際のアプリケーション開発を擬似的に経験する。
@@ -42,13 +44,14 @@ docker-compose up -d --build
 
 ## 🌲環境構築
 **Dockerを立ち上げた後は、以下の手順を順番に実行してください**
-### 1. phpコンテナへログイン
+### 1. エイリアスの設定（以降、.vendor/bin/sailをsailに短縮してコマンドを使用するため）
 ```bash
-docker-compose exec php bash
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
+exec $SHELL
 ```
 ### 2. ライブラリのインストール
 ```bash
-composer install
+sail composer install
 ```
 ### 3. 環境設定ファイルの作成
 ```bash
@@ -69,6 +72,8 @@ sail artisan test --coverage
 ```
 ## 🛠使用技術
 - Laravel 10.50.3
+- Laravel Sail
+- Tailwind CSS
 - PHP 8.5.9
 - mysql 8.4
 - nginx 1.21.1
@@ -84,8 +89,6 @@ sail artisan test --coverage
 要件シートに則った基本要件の実装
 ### 📃ER図
 ![ER図](ER.png)
-### 月次勤怠のCSVファイル出力
-管理者画面の指定のスタッフの月次勤怠リストから開いているページの月の勤怠をCSVファイルにて出力
 ### API
 ルート設定はapiResourceを用いて、5エンドポイントを一括定義(index,store,show,update,destroy)。sunctum認証でstore,update,destroyの機能制限をしている。
 #### index
@@ -106,8 +109,3 @@ sail artisan test --coverage
 実装<br>
 - app/Policies/AttendanceRecordPolicy.phpを作成し、update,destroyのアクション時に本人または管理者の権限の確認を行う<br>
 - Laravel Sanctumを導入しstore,update,destroyのルートにミドルウェアauth:sanctumを適用
-### マイ勤怠レポート画面表示機能
-当月を基準に半年間の勤怠情報の集計画面の表示<br>
-労働時間•残業時間の各合計時間、1日の平均労働時間の表示<br>
-半年の期間の各月の勤怠情報<br>
-遅刻回数、早退回数、長時間労働回数のカウント
