@@ -80,13 +80,17 @@ class BookController extends Controller
     public function favorite(Book $book): RedirectResponse
     {
         $user = Auth()->user();
-        $user->favoriteBooks()->toggle($book->id);
-
-        if ($book->user_id !== auth()->id()) {
-            $book->user->notify(new FavoriteBook($book, auth()->user()));
+        $result = $user->favoriteBooks()->toggle($book->id);
+        $isAttached = !empty($result['attached']);
+        if ($isAttached) {
+            if ($book->user_id !== auth()->id()) {
+                $book->user->notify(new FavoriteBook($book, auth()->user()));
+            }
+            $message = 'お気に入り登録しました。';
+        } else {
+            $message = 'お気に入りを解除しました。';
         }
-
-        return back()->with('success','お気に入り登録しました。');
+        return back()->with('success', $message);
     }
 
     /**
@@ -98,7 +102,7 @@ class BookController extends Controller
      */
     public function review(BookReviewRequest $request, Book $book): RedirectResponse
     {
-        DB::transaction(function() use($request,$book){
+        DB::transaction(function () use ($request, $book) {
             Review::create(array_merge($request->validated(), [
                 'user_id' => Auth()->id(),
                 'book_id' => $book->id,
@@ -116,7 +120,7 @@ class BookController extends Controller
      */
     public function destroy(Book $book): RedirectResponse
     {
-        DB::transaction(function() use($book){
+        DB::transaction(function () use ($book) {
             $book->delete();
         });
         return redirect('/books')->with('success', "「{$book->title}」を削除しました。");
@@ -165,7 +169,7 @@ class BookController extends Controller
      */
     public function store(BookCreateRequest $request): RedirectResponse
     {
-        $book = DB::transaction(function() use($request){
+        $book = DB::transaction(function () use ($request) {
             $newBook = Book::create(array_merge($request->validated(), [
                 'user_id' => Auth()->id()
             ]));
@@ -198,11 +202,11 @@ class BookController extends Controller
      */
     public function update(BookCreateRequest $request, Book $book): RedirectResponse
     {
-        DB::transaction(function() use($request,$book){
+        DB::transaction(function () use ($request, $book) {
             $book->update($request->validated());
             $book->genres()->sync($request->genres);
         });
 
-        return redirect("/books/$book->id")->with('success',"{$book->title}を変更しました。");
+        return redirect("/books/$book->id")->with('success', "{$book->title}を変更しました。");
     }
 }
