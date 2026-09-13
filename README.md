@@ -94,7 +94,9 @@ exec $SHELL
 ```bash
 sail npm install
 ```
+
 ⚠️OCI runtime exec failed: exec failed •••のエラーが出た場合は、一度**sail down**を実行し、**sail up -d**で再度、コンテナを立ち上げてください。
+
 ### 4. Alpine.jsのインストール
 
 ```bash
@@ -158,6 +160,7 @@ sail npm run dev
 ```
 
 ⚠️このコマンドは、コマンドが実行状態になります。以降のコマンド入力は別のターミナルから入力してください。
+
 ### (10. PHPunitでの各アクションの動作テスト )
 
 ```bash
@@ -219,6 +222,3 @@ sail artisan test --coverage
 
 - 書籍情報を更新するアクション
 - 書籍IDを指定することで、書籍を削除することができる。
-  実装<br>
-- app/Policies/AttendanceRecordPolicy.phpを作成し、update,destroyのアクション時に本人または管理者の権限の確認を行う<br>
-- Laravel Sanctumを導入しstore,update,destroyのルートにミドルウェアauth:sanctumを適用
