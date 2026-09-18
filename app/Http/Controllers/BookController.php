@@ -179,7 +179,7 @@ class BookController extends Controller
             return $newBook;
         });
 
-        return redirect('/books')->with('success', "書籍を登録しました。");
+        return redirect("/books/{$book->id}")->with('success', "書籍を登録しました。");
     }
 
     /**
