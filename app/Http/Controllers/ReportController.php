@@ -36,7 +36,7 @@ class ReportController extends Controller
                 'average_rating' => $user->reviews()->avg('rating'),
             ],
             'rating_distribution' => collect(range(0, 4))->mapWithKeys(function ($rating) use ($user) {
-                $count = $user->reviews()->where('rating', $rating)->count();
+                $count = $user->reviews()->where('rating', $rating +1)->count();
                 return [$rating => $count];
             }),
             'top_rated_books' => $user->reviews()
