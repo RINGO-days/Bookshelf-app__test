@@ -96,10 +96,11 @@ class GenreController extends Controller
      */
     public function destroy(Genre $genre): RedirectResponse
     {
+        if ($genre->books()->exists()) {
+            return back()->with('error', "「{$genre->name}」に紐付いている書籍があるため、削除できません。");
+        }
+
         DB::transaction(function() use($genre){
-            if ($genre->books()->exists()) {
-                return back()->with('error', "「{$genre->name}」に紐付いている書籍があるため、削除できません。");
-            }
             $genre->delete();
         });
 
