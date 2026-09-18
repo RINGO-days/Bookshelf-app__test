@@ -59,7 +59,7 @@ class ReadingPlansController extends Controller
             ]);
         });
 
-        return redirect('/reading-plans')->with('success', '新しく読書計画を作成しました。');
+        return redirect('/reading-plans')->with('success', '読書計画を作成しました。');
     }
 
     /**

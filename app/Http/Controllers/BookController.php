@@ -125,7 +125,7 @@ class BookController extends Controller
         DB::transaction(function () use ($book) {
             $book->delete();
         });
-        return redirect('/books')->with('success', "「{$book->title}」を削除しました。");
+        return redirect('/books')->with('success', "書籍を削除しました。");
     }
 
     /**
@@ -179,7 +179,7 @@ class BookController extends Controller
             return $newBook;
         });
 
-        return redirect('/books')->with('success', "{$book->title}を登録しました。");
+        return redirect('/books')->with('success', "書籍を登録しました。");
     }
 
     /**
@@ -209,6 +209,6 @@ class BookController extends Controller
             $book->genres()->sync($request->genres);
         });
 
-        return redirect("/books/$book->id")->with('success', "{$book->title}を変更しました。");
+        return redirect("/books/$book->id")->with('success', "書籍情報を更新しました。");
     }
 }

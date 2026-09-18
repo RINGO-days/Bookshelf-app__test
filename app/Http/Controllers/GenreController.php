@@ -58,7 +58,7 @@ class GenreController extends Controller
             Genre::create($request->validated());
         });
 
-        return redirect('/genres')->with('success', "「{$request->name}」を追加しました。");
+        return redirect('/genres')->with('success', "ジャンルを作成しました。");
     }
 
     /**
@@ -85,7 +85,7 @@ class GenreController extends Controller
             $genre->update($request->validated());
         });
 
-        return redirect("/genres")->with('success', "「{$oldName}」を「{$genre->name}」に変更しました。");
+        return redirect("/genres")->with('success', "ジャンルを更新しました。");
     }
 
     /**
@@ -97,13 +97,13 @@ class GenreController extends Controller
     public function destroy(Genre $genre): RedirectResponse
     {
         if ($genre->books()->exists()) {
-            return back()->with('error', "「{$genre->name}」に紐付いている書籍があるため、削除できません。");
+            return back()->with('error', "このジャンルに紐付いている書籍があるため、削除できません。");
         }
 
         DB::transaction(function() use($genre){
             $genre->delete();
         });
 
-        return back()->with('success', "「{$genre->name}」を削除しました。");;
+        return back()->with('success', "ジャンルを削除しました。");;
     }
 }
