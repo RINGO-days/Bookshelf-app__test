@@ -42,18 +42,20 @@ class BookController extends Controller
 
         $query->withAvg('reviews', 'rating')->withCount('reviews');
 
-        if ($request->query('sort') === 'newest') {
+        $sort = $request->query('sort');
+        if ($sort === 'newest') {
             $query->orderBy('updated_at', 'desc');
-        } elseif ($request->query('sort') === 'oldest') {
+        } elseif ($sort === 'oldest') {
             $query->orderBy('updated_at', 'asc');
-        } elseif ($request->query('sort') === 'rating') {
+        } elseif ($sort === 'rating') {
             $query->orderBy('reviews_avg_rating', 'desc');
-        } elseif (($request->query('sort') === 'title')) {
+        } elseif (($sort === 'title')) {
             $query->orderBy('title', 'asc');
+        } else {
+            $query->orderBy('updated_at','desc');
         }
 
         $books = $query->paginate(10);
-
         $genres = Genre::all();
         return view('books.index', compact('books', 'genres'));
     }
