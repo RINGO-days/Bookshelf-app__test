@@ -230,11 +230,30 @@ class ReadingPlanTest extends TestCase
         ReadingPlan::create([
             'user_id' => $user->id,
             'book_id' => $book->id,
+            'target_date' => now()->addDays(3)->format('Y-m-d'),
+        ]);
+        $this->artisan('app:check-3days-ago');
+        $notification = $user->notifications()->first();
+        $this->assertEquals("「{$book->title}」の読書の期日が3日前となりました。", $notification->data['body']);
+    }
+    public function test_読書計画の期日の3日後の場合、ユーザーに通知が届く(): void
+    {
+        $user = User::factory()->create();
+        $book = Book::create([
+            'title' => 'テスト本',
+            'author' => 'テスト著者',
+            'isbn' => '1234567891234',
+            'published_date' => now(),
+            'user_id' => $user->id,
+        ]);
+        ReadingPlan::create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
             'target_date' => now()->subDays(3)->format('Y-m-d'),
         ]);
-        $this->artisan('app:check-3daysAgo');
+        $this->artisan('app:check-3days-later');
         $notification = $user->notifications()->first();
-        $this->assertEquals("{$book->title}の読書の期日が3日後となりました。", $notification->data['body']);
+        $this->assertEquals("「{$book->title}」の読書の期日から3日が過ぎました。", $notification->data['body']);
     }
     public function test_読書計画の期日が過ぎた場合、ステータスが「期日過ぎ」に変更されユーザーに通知が届く(): void
     {
@@ -256,6 +275,6 @@ class ReadingPlanTest extends TestCase
             'status' => 'expired'
         ]);
         $notification = $user->notifications()->first();
-        $this->assertEquals('テスト本の読書の期日が過ぎました。', $notification->data['body']);
+        $this->assertEquals("「{$book->title}」の読書の期日の当日となりました。", $notification->data['body']);
     }
 }

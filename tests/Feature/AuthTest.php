@@ -6,6 +6,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Book;
+use App\Models\Review;
+use App\Models\Genre;
 
 class AuthTest extends TestCase
 {
@@ -128,5 +131,88 @@ class AuthTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
         $response->assertRedirect('/login');
         $this->assertGuest();
+    }
+
+    public function test_未認証ユーザーが書籍お気に入り登録した際、ログイン画面へリダイレクトされる。()
+    {
+        $user = User::factory()->create();
+        $book = Book::create([
+            'title' => 'テスト本',
+            'author' => 'テスト著者',
+            'isbn' => '1234567891234',
+            'published_date' => now(),
+            'user_id' => $user->id,
+        ]);
+        $response = $this->post('books/' . $book->id . '/favorite');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーがレビューを投稿した際、ログイン画面へリダイレクトされる。()
+    {
+        $user = User::factory()->create();
+        $book = Book::create([
+            'title' => 'テスト本',
+            'author' => 'テスト著者',
+            'isbn' => '1234567891234',
+            'published_date' => now(),
+            'user_id' => $user->id,
+        ]);
+        $response = $this->post('books/' . $book->id . '/review');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーがレビューにいいねした際、ログイン画面へリダイレクトされる。()
+    {
+        $user = User::factory()->create();
+        $book = Book::create([
+            'title' => 'テスト本',
+            'author' => 'テスト著者',
+            'isbn' => '1234567891234',
+            'published_date' => now(),
+            'user_id' => $user->id,
+        ]);
+        $review = Review::create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
+            'rating' => 5,
+            'comment' => 'テストレビュー'
+        ]);
+
+        $response = $this->post('reviews/' . $review->id . '/like');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーが書籍お気に入り一覧画面にアクセスした際、ログイン画面へリダイレクトされる。()
+    {
+        $response = $this->get('/favorite');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーがジャンル一覧画面にアクセスした際、ログイン画面へリダイレクトされる。()
+    {
+        $response = $this->get('/genres');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーがジャンル詳細画面にアクセスした際、ログイン画面へリダイレクトされる。()
+    {
+        $genre = Genre::create([
+            'name' => 'テスト'
+        ]);
+        $response = $this->get('/genres/show/'.$genre->id);
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーがジャンル登録画面にアクセスした際、ログイン画面へリダイレクトされる。()
+    {
+        $response = $this->get('/genres/create/');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーがジャンル編集画面にアクセスした際、ログイン画面へリダイレクトされる。()
+    {
+        $genre = Genre::create([
+            'name' => 'テスト'
+        ]);
+        $response = $this->get('/genres/'.$genre->id.'/edit');
+        $response->assertRedirect('/login');
+    }
+    public function test_未認証ユーザーが読書計画画面にアクセスした際、ログイン画面へリダイレクトされる。()
+    {
+        $response = $this->get('/reading-plans');
+        $response->assertRedirect('/login');
     }
 }

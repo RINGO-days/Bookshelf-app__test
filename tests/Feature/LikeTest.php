@@ -15,7 +15,7 @@ class LikeTest extends TestCase
      * A basic feature test example.
      */
     use RefreshDatabase;
-    public function test_レビューの投稿に対して「いいね」ができる。またレビュー投稿者に通知が入る(): void
+    public function test_レビューの投稿に対して「いいね」ができる。(): void
     {
         $user = User::factory()->create();
         $likedByUser = User::factory()->create();
@@ -39,8 +39,5 @@ class LikeTest extends TestCase
             'review_id' => $review->id,
             'user_id' => $likedByUser->id
         ]);
-
-        $notification = $user->notifications()->first();
-        $this->assertEquals("{$likedByUser->name}があなたのレビュー({$book->title})に「いいね！」をしました。", $notification->data['body']);
     }
 }

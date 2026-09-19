@@ -47,9 +47,9 @@ class PlanReminderNotification extends Notification
             '3days-later' => '読書計画の期限超過',
         };
         $message = match($this->timing){
-            '3days-ago' => "「{$bookTitle}」の読書の期日が３日前となりました。",
+            '3days-ago' => "「{$bookTitle}」の読書の期日が3日前となりました。",
             'today' => "「{$bookTitle}」の読書の期日の当日となりました。",
-            '3days-later' => "「{$bookTitle}」の読書の期日から３日が過ぎました。"
+            '3days-later' => "「{$bookTitle}」の読書の期日から3日が過ぎました。"
         };
         return [
             'plan_id' => $this->plan->id,
