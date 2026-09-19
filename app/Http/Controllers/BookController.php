@@ -74,7 +74,6 @@ class BookController extends Controller
     /**
      * 書籍詳細画面にてお気に入りボタンを押すアクション
      * 中間テーブル（favoriteBooks）にてトグル操作
-     * お気に入りをした書籍の登録者に、通知が入る
      *
      * @param Book $book
      * @return RedirectResponse
@@ -82,17 +81,9 @@ class BookController extends Controller
     public function favorite(Book $book): RedirectResponse
     {
         $user = Auth()->user();
-        $result = $user->favoriteBooks()->toggle($book->id);
-        $isAttached = !empty($result['attached']);
-        if ($isAttached) {
-            if ($book->user_id !== auth()->id()) {
-                $book->user->notify(new FavoriteBook($book, auth()->user()));
-            }
-            $message = 'お気に入り登録しました。';
-        } else {
-            $message = 'お気に入りを解除しました。';
-        }
-        return back()->with('success', $message);
+        $user->favoriteBooks()->toggle($book->id);
+        
+        return back()->with('success');
     }
 
     /**
