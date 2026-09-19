@@ -25,7 +25,6 @@ class ReviewController extends Controller
 
     /**
      * レビューに対していいねをするアクション
-     * いいね時にレビューをしたユーザーが本人ではない場合、レビューしたユーザーに通知が飛ぶ
      *
      * @param Review #review
      * @return RedirectResponse
@@ -33,11 +32,6 @@ class ReviewController extends Controller
     public function like(Review $review): RedirectResponse
     {
         $review->likedByUsers()->toggle(Auth()->id());
-
-        $reviewOwner = $review->user;
-        if ($reviewOwner->id !== auth()->id()) {
-            $reviewOwner->notify(new LikedReview($review, auth()->user()));
-        }
 
         return back();
     }
