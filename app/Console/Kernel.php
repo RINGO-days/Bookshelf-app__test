@@ -12,7 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command(\App\Console\Commands\PlanReminder::class)->daily();
+        $schedule->command(\App\Console\Commands\CheckExpired::class)->dailyAt('20:00');
+        $schedule->command(\App\Console\Commands\Check3daysAgo::class)->dailyAt('20:00');
+        $schedule->command(\App\Console\Commands\Check3dayslater::class)->dailyAt('20:00');
     }
 
     /**
