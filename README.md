@@ -161,12 +161,33 @@ sail npm run dev
 
 ⚠️このコマンドは、コマンドが実行状態になります。以降のコマンド入力は別のターミナルから入力してください。
 
-### (10. PHPunitでの各アクションの動作テスト )
+### 11. PHPunitでの各アクションの動作テスト
 
 ```bash
 sail artisan test --coverage
 ```
 
+## リマインダー機能
+下記のコマンドを実行すると、１分ごとに読書計画の期日の確認を行います。
+```bash
+sail artisan schedule:work
+```
+⚠️停止する場合は「control + c」を押してください。
+### 期日の確認を単体でテストする場合
+**期日３日前になったら通知**
+```bash
+sail artisan app:check-3days-ago
+```
+---
+**期日当日になったら通知**
+```bash
+sail artisan app:check-expired
+```
+---
+**期日から３日が過ぎたら通知**
+```bash
+sail artisan app:check-3days-later
+```
 ## 🛠使用技術
 
 - Laravel 10.50.3
