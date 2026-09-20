@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ReviewsTableSeeder::class);
         $this->call(FavoritesTableSeeder::class);
         $this->call(ReviewLikeTableSeeder::class);
+        $this->call(ReadingPlanTableSeeder::class);
     }
 }
