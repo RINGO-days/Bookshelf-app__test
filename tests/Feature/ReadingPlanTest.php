@@ -39,8 +39,8 @@ class ReadingPlanTest extends TestCase
     public function test_読書計画の一覧のステータスの絞り込みができる(): void
     {
         $user = User::factory()->create();
-        $wantBook = Book::create([
-            'title' => '読みたいテスト本',
+        $inProgressBook = Book::create([
+            'title' => '読んでいるテスト本',
             'author' => 'テスト著者',
             'isbn' => '1234567891234',
             'published_date' => now(),
@@ -55,7 +55,7 @@ class ReadingPlanTest extends TestCase
         ]);
         ReadingPlan::create([
             'user_id' => $user->id,
-            'book_id' => $wantBook->id,
+            'book_id' => $inProgressBook->id,
             'target_date' => now()->addMonths(1)->format('Y-m-d'),
         ]);
         ReadingPlan::create([
@@ -65,14 +65,14 @@ class ReadingPlanTest extends TestCase
             'status' => 'completed'
         ]);
 
-        $response = $this->actingAs($user)->get('/reading-plans?status=want');
+        $response = $this->actingAs($user)->get('/reading-plans?status=in_progress');
         $response->assertStatus(200);
-        $response->assertSee('読みたいテスト本');
-        $response->assertDontSee('読んだ本');
+        $response->assertSee('読んでいるテスト本');
+        $response->assertDontSee('読んだテスト本');
 
         $response = $this->actingAs($user)->get('/reading-plans?status=completed');
         $response->assertSee('読んだテスト本');
-        $response->assertDontSee('読みたい本');
+        $response->assertDontSee('読んでいるテスト本');
     }
     public function test_読書計画のステータスを「読了」にできる(): void
     {

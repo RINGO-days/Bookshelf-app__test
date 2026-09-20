@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('book_id')->constrained()->cascadeOnDelete();
             $table->date('target_date');
             $table->date('completed_at')->nullable();
-            $table->string('status')->default('want');
+            $table->string('status')->default('in_progress');
             $table->timestamps();
         });
     }

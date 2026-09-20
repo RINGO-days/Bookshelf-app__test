@@ -38,9 +38,9 @@ class ReportTest extends TestCase
             return $stats['summary']['total_reviews'] === $statsData['summary']['total_reviews']
             && $stats['summary']['books_read'] === $statsData['summary']['books_read']
             && $stats['summary']['average_rating'] === $statsData['summary']['average_rating']
-            && $stats['rating_distribution'] === $statsData['rating_distribution']
-            && $stats['top_rated_books'] === $statsData['top_rated_books']
-            && $stats['genre_ratings'] === $statsData['genre_ratings'];
+            && collect($stats['rating_distribution'])->toArray() === collect($statsData['rating_distribution'])->toArray()
+            && collect($stats['top_rated_books'])->toArray() === collect($statsData['top_rated_books'])->toArray()
+            && collect($stats['genre_ratings'])->toArray() === collect($statsData['genre_ratings'])->toArray();
         });
     }
 }
