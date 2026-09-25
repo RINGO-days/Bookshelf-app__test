@@ -15,7 +15,7 @@ class LikeTest extends TestCase
      * A basic feature test example.
      */
     use RefreshDatabase;
-    public function test_レビューの投稿に対して「いいね」ができる。(): void
+    public function test_レビューの投稿に対して「いいね」ができ、また解除ができる(): void
     {
         $user = User::factory()->create();
         $likedByUser = User::factory()->create();
@@ -36,6 +36,12 @@ class LikeTest extends TestCase
         $response = $this->actingAs($likedByUser)->post('/reviews/' . $review->id . '/like');
         $response->assertStatus(302);
         $this->assertDatabaseHas('reviewLike', [
+            'review_id' => $review->id,
+            'user_id' => $likedByUser->id
+        ]);
+        $response = $this->actingAs($likedByUser)->post('/reviews/' . $review->id . '/like');
+        $response->assertStatus(302);
+        $this->assertDatabaseMissing('reviewLike', [
             'review_id' => $review->id,
             'user_id' => $likedByUser->id
         ]);

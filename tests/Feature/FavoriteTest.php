@@ -14,7 +14,7 @@ class FavoriteTest extends TestCase
      * A basic feature test example.
      */
     use RefreshDatabase;
-    public function test_書籍詳細画面にて、お気に入り登録ができる。(): void
+    public function test_書籍詳細画面にて、お気に入り登録ができ、また解除ができる(): void
     {
         $user = User::factory()->create();
         $likedByUser = User::factory()->create();
@@ -28,6 +28,12 @@ class FavoriteTest extends TestCase
         $response = $this->actingAs($likedByUser)->post('/books/' . $book->id . '/favorite');
         $response->assertStatus(302);
         $this->assertDatabaseHas('favoriteBooks', [
+            'book_id' => $book->id
+        ]);
+
+        $response = $this->actingAs($likedByUser)->post('/books/' . $book->id . '/favorite');
+        $response->assertStatus(302);
+        $this->assertDatabaseMissing('favoriteBooks', [
             'book_id' => $book->id
         ]);
     }
