@@ -71,6 +71,7 @@ class ReadingPlansController extends Controller
     public function complete(ReadingPlan $plan): RedirectResponse
     {
         DB::transaction(function()use($plan){
+            $this->authorize('update', $plan);
             $plan->update([
                 'completed_at' => now(),
                 'status' => ReadingPlanStatus::Completed
@@ -88,6 +89,7 @@ class ReadingPlansController extends Controller
      */
     public function edit($plan): View
     {
+        $this->authorize('update', $plan);
         $readingPlan = ReadingPlan::find($plan);
 
         return view('reading-plans.edit', compact('readingPlan'));
@@ -103,6 +105,7 @@ class ReadingPlansController extends Controller
     public function update(ReadingPlansEditRequest $request, ReadingPlan $plan): RedirectResponse
     {
         DB::transaction(function()use($request,$plan){
+            $this->authorize('update', $plan);
             $plan->update([
                 'target_date' => $request->target_date,
             ]);
@@ -120,6 +123,7 @@ class ReadingPlansController extends Controller
     public function destroy(ReadingPlan $plan): RedirectResponse
     {
         DB::transaction(function()use($plan){
+            $this->authorize('delete', $plan);
             $plan->delete();
         });
 

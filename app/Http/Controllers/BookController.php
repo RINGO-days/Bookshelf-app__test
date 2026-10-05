@@ -114,6 +114,7 @@ class BookController extends Controller
     public function destroy(Book $book): RedirectResponse
     {
         DB::transaction(function () use ($book) {
+            $this->authorize('delete', $book);
             $book->delete();
         });
         return redirect('/books')->with('success', "書籍を削除しました。");
@@ -181,6 +182,7 @@ class BookController extends Controller
      */
     public function edit(Book $book): View
     {
+        $this->authorize('update', $book);
         $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));
