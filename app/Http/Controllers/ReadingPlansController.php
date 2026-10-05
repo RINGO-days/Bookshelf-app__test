@@ -59,7 +59,7 @@ class ReadingPlansController extends Controller
             ]);
         });
 
-        return redirect('/reading-plans')->with('success', '新しく読書計画を作成しました。');
+        return redirect('/reading-plans')->with('success', '読書計画を作成しました。');
     }
 
     /**
@@ -71,13 +71,14 @@ class ReadingPlansController extends Controller
     public function complete(ReadingPlan $plan): RedirectResponse
     {
         DB::transaction(function()use($plan){
+            $this->authorize('update', $plan);
             $plan->update([
                 'completed_at' => now(),
                 'status' => ReadingPlanStatus::Completed
             ]);
         });
 
-        return redirect('/reading-plans')->with('success', '読書計画のステータスを「読了」にしました。');
+        return redirect('/reading-plans')->with('success', '読書計画を更新しました。');
     }
 
     /**
@@ -88,6 +89,7 @@ class ReadingPlansController extends Controller
      */
     public function edit($plan): View
     {
+        $this->authorize('update', $plan);
         $readingPlan = ReadingPlan::find($plan);
 
         return view('reading-plans.edit', compact('readingPlan'));
@@ -103,12 +105,13 @@ class ReadingPlansController extends Controller
     public function update(ReadingPlansEditRequest $request, ReadingPlan $plan): RedirectResponse
     {
         DB::transaction(function()use($request,$plan){
+            $this->authorize('update', $plan);
             $plan->update([
                 'target_date' => $request->target_date,
             ]);
         });
 
-        return redirect('reading-plans')->with('success', '期日を変更しました。');
+        return redirect('reading-plans')->with('success', '読書計画を更新しました。');
     }
 
     /**
@@ -120,6 +123,7 @@ class ReadingPlansController extends Controller
     public function destroy(ReadingPlan $plan): RedirectResponse
     {
         DB::transaction(function()use($plan){
+            $this->authorize('delete', $plan);
             $plan->delete();
         });
 

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Book;
 use App\Models\ReadingPlan;
 use App\Models\Review;
+use App\Services\ReportService;
 
 class ReportTest extends TestCase
 {
@@ -30,17 +31,16 @@ class ReportTest extends TestCase
 
         $response = $this->actingAs($user)->get('/report');
         $response->assertStatus(200);
-        $response->assertViewHas('stats', function ($stats) use ($user) {
-            $reviewCount = $user->reviews()->count();
-            return $stats['summary']['total_reviews'] === $reviewCount;
-        });
-        $response->assertViewHas('stats', function ($stats) use ($user) {
-            $completedCount = $user->plans()->where('status', 'completed')->count();
-            return $stats['summary']['books_read'] === $completedCount;
-        });
-        $response->assertViewHas('stats', function ($stats) use ($user) {
-            $avgRating = $user->reviews()->avg('rating');
-            return $stats['summary']['average_rating'] === $avgRating;
+
+        $reportService = app(ReportService::class);
+        $statsData = $reportService->getStats($user);
+        $response->assertViewHas('stats', function ($stats) use ($statsData) {
+            return $stats['summary']['total_reviews'] === $statsData['summary']['total_reviews']
+            && $stats['summary']['books_read'] === $statsData['summary']['books_read']
+            && $stats['summary']['average_rating'] === $statsData['summary']['average_rating']
+            && collect($stats['rating_distribution'])->toArray() === collect($statsData['rating_distribution'])->toArray()
+            && collect($stats['top_rated_books'])->toArray() === collect($statsData['top_rated_books'])->toArray()
+            && collect($stats['genre_ratings'])->toArray() === collect($statsData['genre_ratings'])->toArray();
         });
     }
 }

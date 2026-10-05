@@ -42,18 +42,20 @@ class BookController extends Controller
 
         $query->withAvg('reviews', 'rating')->withCount('reviews');
 
-        if ($request->query('sort') === 'newest') {
+        $sort = $request->query('sort');
+        if ($sort === 'newest') {
             $query->orderBy('updated_at', 'desc');
-        } elseif ($request->query('sort') === 'oldest') {
+        } elseif ($sort === 'oldest') {
             $query->orderBy('updated_at', 'asc');
-        } elseif ($request->query('sort') === 'rating') {
+        } elseif ($sort === 'rating') {
             $query->orderBy('reviews_avg_rating', 'desc');
-        } elseif (($request->query('sort') === 'title')) {
+        } elseif (($sort === 'title')) {
             $query->orderBy('title', 'asc');
+        } else {
+            $query->orderBy('updated_at','desc');
         }
 
         $books = $query->paginate(10);
-
         $genres = Genre::all();
         return view('books.index', compact('books', 'genres'));
     }
@@ -72,7 +74,6 @@ class BookController extends Controller
     /**
      * 書籍詳細画面にてお気に入りボタンを押すアクション
      * 中間テーブル（favoriteBooks）にてトグル操作
-     * お気に入りをした書籍の登録者に、通知が入る
      *
      * @param Book $book
      * @return RedirectResponse
@@ -81,12 +82,8 @@ class BookController extends Controller
     {
         $user = Auth()->user();
         $user->favoriteBooks()->toggle($book->id);
-
-        if ($book->user_id !== auth()->id()) {
-            $book->user->notify(new FavoriteBook($book, auth()->user()));
-        }
-
-        return back()->with('success','お気に入り登録しました。');
+        
+        return back()->with('success');
     }
 
     /**
@@ -98,7 +95,7 @@ class BookController extends Controller
      */
     public function review(BookReviewRequest $request, Book $book): RedirectResponse
     {
-        DB::transaction(function() use($request,$book){
+        DB::transaction(function () use ($request, $book) {
             Review::create(array_merge($request->validated(), [
                 'user_id' => Auth()->id(),
                 'book_id' => $book->id,
@@ -116,10 +113,11 @@ class BookController extends Controller
      */
     public function destroy(Book $book): RedirectResponse
     {
-        DB::transaction(function() use($book){
+        DB::transaction(function () use ($book) {
+            $this->authorize('delete', $book);
             $book->delete();
         });
-        return redirect('/books')->with('success', "「{$book->title}」を削除しました。");
+        return redirect('/books')->with('success', "書籍を削除しました。");
     }
 
     /**
@@ -165,7 +163,7 @@ class BookController extends Controller
      */
     public function store(BookCreateRequest $request): RedirectResponse
     {
-        $book = DB::transaction(function() use($request){
+        $book = DB::transaction(function () use ($request) {
             $newBook = Book::create(array_merge($request->validated(), [
                 'user_id' => Auth()->id()
             ]));
@@ -173,7 +171,7 @@ class BookController extends Controller
             return $newBook;
         });
 
-        return redirect('/books')->with('success', "{$book->title}を登録しました。");
+        return redirect("/books/{$book->id}")->with('success', "書籍を登録しました。");
     }
 
     /**
@@ -184,6 +182,7 @@ class BookController extends Controller
      */
     public function edit(Book $book): View
     {
+        $this->authorize('update', $book);
         $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));
@@ -198,11 +197,11 @@ class BookController extends Controller
      */
     public function update(BookCreateRequest $request, Book $book): RedirectResponse
     {
-        DB::transaction(function() use($request,$book){
+        DB::transaction(function () use ($request, $book) {
             $book->update($request->validated());
             $book->genres()->sync($request->genres);
         });
 
-        return redirect("/books/$book->id")->with('success',"{$book->title}を変更しました。");
+        return redirect("/books/$book->id")->with('success', "書籍情報を更新しました。");
     }
 }

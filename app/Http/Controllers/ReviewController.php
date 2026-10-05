@@ -20,12 +20,12 @@ class ReviewController extends Controller
      */
     public function edit(Review $review): View
     {
+        $this->authorize('update', $review);
         return view('reviews.edit', compact('review'));
     }
 
     /**
      * レビューに対していいねをするアクション
-     * いいね時にレビューをしたユーザーが本人ではない場合、レビューしたユーザーに通知が飛ぶ
      *
      * @param Review #review
      * @return RedirectResponse
@@ -33,11 +33,6 @@ class ReviewController extends Controller
     public function like(Review $review): RedirectResponse
     {
         $review->likedByUsers()->toggle(Auth()->id());
-
-        $reviewOwner = $review->user;
-        if ($reviewOwner->id !== auth()->id()) {
-            $reviewOwner->notify(new LikedReview($review, auth()->user()));
-        }
 
         return back();
     }
@@ -51,6 +46,7 @@ class ReviewController extends Controller
     public function destroy(Review $review): RedirectResponse
     {
         DB::transaction(function()use($review){
+            $this->authorize('delete', $review);
             $review->delete();
         });
 
@@ -66,6 +62,7 @@ class ReviewController extends Controller
     public function update(ReviewRequest $request, Review $review): RedirectResponse
     {
         DB::transaction(function()use($request,$review){
+            $this->authorize('update', $review);
             $review->update($request->validated());
         });
 
