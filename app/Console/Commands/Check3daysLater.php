@@ -31,10 +31,12 @@ class Check3daysLater extends Command
 
         ReadingPlan::with('user')
             ->where('target_date', now()->subDays(3)->format('Y-m-d'))
-            ->where('status', '!=', 'expired')
             ->get()
             ->each(function ($remainderPlan) {
                 $remainderPlan->user->notify(new PlanReminderNotification($remainderPlan,'3days-later'));
+                $remainderPlan->update([
+                    'status' => 'expired'
+                ]);
             });
 
         $this->info('確認終了');

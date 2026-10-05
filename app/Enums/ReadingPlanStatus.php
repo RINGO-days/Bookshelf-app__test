@@ -12,13 +12,13 @@ enum ReadingPlanStatus: string
     {
         switch ($this) {
             case self::InProgress:
-                return '読書中';
+                return '進行中';
 
             case self::Completed:
-                return '読了';
+                return '完了';
 
             case self::Expired:
-                return '期日超え';
+                return '期日切れ';
         }
     }
     public function badgeClass(): string

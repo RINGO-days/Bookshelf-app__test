@@ -77,7 +77,7 @@ class ReadingPlansController extends Controller
             ]);
         });
 
-        return redirect('/reading-plans')->with('success', '読書計画のステータスを「読了」にしました。');
+        return redirect('/reading-plans')->with('success', '読書計画を更新しました。');
     }
 
     /**
@@ -108,7 +108,7 @@ class ReadingPlansController extends Controller
             ]);
         });
 
-        return redirect('reading-plans')->with('success', '期日を変更しました。');
+        return redirect('reading-plans')->with('success', '読書計画を更新しました。');
     }
 
     /**
